@@ -1,0 +1,10 @@
+# action.yml
+name: build
+description: 'Build debian package'
+outputs:
+  pkgname:
+    description: 'Name of the built `.deb` file'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

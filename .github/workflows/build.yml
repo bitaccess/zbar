@@ -1,0 +1,33 @@
+# Runs when there is a push to master and there has been a change to
+# the DEBIAN/control file indicating a version change
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'debian/test-control'
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      # https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+      - uses: actions/checkout@v2
+
+        # Builds the debian package using the actions.yml action in root directory
+      - uses: ./
+        id: build
+
+        # Uploads the deb package to github
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.build.outputs.pkgname }}
+          path: ${{ steps.build.outputs.pkgname }}
+
+        # scp the deb package to the package repo
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEB_REPO_HOST }}
+          username: ${{ secrets.DEB_REPO_USERNAME }}
+          key: ${{ secrets.DEB_REPO_KEY }}
+          source: ${{ steps.build.outputs.pkgname }}
+          target: /var/www/html/bitaccess/dists/upload/
