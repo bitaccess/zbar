@@ -5,7 +5,7 @@ on:
     branches:
       - '**'
     paths:
-      - 'debian/test-control'
+      - 'test-control/test-control'
 jobs:
   build-deb:
     runs-on: ubuntu-latest
